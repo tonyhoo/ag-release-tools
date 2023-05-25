@@ -1,4 +1,4 @@
-FROM 763104351884.dkr.ecr.us-east-1.amazonaws.com/autogluon-training:0.6.2-cpu-py38-ubuntu20.04
+FROM 763104351884.dkr.ecr.us-east-1.amazonaws.com/autogluon-training:0.7.0-cpu-py39-ubuntu20.04
 
 # set the working directory
 WORKDIR /code
@@ -6,8 +6,8 @@ WORKDIR /code
 RUN apt-get -y update
 RUN apt-get -y install git
 # install dependencies in the local requirements.txt
-COPY ../requirements.txt ./
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+#COPY ../../requirements.txt ./
+#RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 # install autogluon
 RUN pip3 install -U pip
@@ -20,6 +20,6 @@ RUN pip install --upgrade mmdet
 RUN pip install --upgrade mmocr
 
 # copy the src to the folder
-COPY ../src ./src
+COPY ../../ /code/
 
-CMD ["python", ".src/main.py"]
+CMD ["python", "/code/src/main.py"]

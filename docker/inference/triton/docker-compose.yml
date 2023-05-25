@@ -1,0 +1,19 @@
+services:
+  app:
+    build: .
+    container_name: ag-release-tools
+    tty: true
+    stdin_open: true
+    ports:
+      - 8000:8000
+      - 8001:8001
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    volumes:
+      - ./ag_tab_model:/opt/ml/model
+      - ../../../.:/code

@@ -1,23 +1,27 @@
-import argparse
-from test_tabular import test_tabular
+import test_tabular
+import test_automm
+import test_triton
+import typer
 
-def done():
-    pass
+app = typer.Typer()
 
-module_tests_map = {
-        "tabular": test_tabular,
-        "done": done
-    }
+@app.command()
+def tabular():
+    print("Running tabular tests...")
+    test_tabular.test_tabular()
+    
+@app.command()
+def automm():
+    print("Running automm tests...")
+    test_automm.test_automm
+    
+@app.command()
+def triton():
+    print("Running triton tests...")
+    test_triton.test_triton()
+
 
 if __name__ == "__main__":
-    module = input(f"Please select module in the list of {module_tests_map.keys()}")
-    while module != "done":
-        test_func = module_tests_map.get(module, None)
-        if test_func is not None:
-            print(f"Running module {module}...")
-            test_func()
-        else:
-            print(f"Module passed {module} is not supported and should be in the list of {module_tests_map.keys()}")
-
+    app()
 
 

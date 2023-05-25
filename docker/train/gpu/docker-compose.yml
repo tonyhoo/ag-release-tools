@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    container_name: ag-release-tools
+    tty: true
+    stdin_open: true
+    command: python /code/src/main.py
+    ports:
+      - 80:80
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    volumes:
+      - ../../../.:/code
