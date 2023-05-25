@@ -27,4 +27,4 @@ fi
 path="./docker/${image_type}/${server_type}/docker-compose.yml"
 
 # Run the appropriate docker-compose command based on the arguments
-docker-compose -f $path up -d --build && docker attach ag-release-tools
+docker-compose -f $path up -d --build && docker attach ag-release-tools && docker-compose -f $path down 

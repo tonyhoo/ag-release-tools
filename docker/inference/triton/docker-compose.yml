@@ -1,6 +1,8 @@
 services:
   app:
-    build: .
+    build: 
+      context: ../../..
+      dockerfile: ./docker/inference/triton/Dockerfile
     container_name: ag-release-tools
     tty: true
     stdin_open: true

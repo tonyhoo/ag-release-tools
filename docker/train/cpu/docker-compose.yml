@@ -1,10 +1,11 @@
 services:
   app:
-    build: .
+    build: 
+      context: ../../..
+      dockerfile: ./docker/train/cpu/Dockerfile
     container_name: ag-release-tools
     tty: true
     stdin_open: true
-    command: python /code/src/main.py
     ports:
       - 80:80
     volumes:
