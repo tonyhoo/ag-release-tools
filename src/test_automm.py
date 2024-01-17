@@ -32,8 +32,8 @@ def test_automm():
     train_data = train_data.sample(500, random_state=0)
     test_data = test_data.sample(100, random_state=0)
 
-    from autogluon.multimodal import AutoMMPredictor
-    predictor = AutoMMPredictor(label=label_col)
+    from autogluon.multimodal import MultiModalPredictor
+    predictor = MultiModalPredictor(label=label_col)
     predictor.fit(
         train_data=train_data,
         hyperparameters={
@@ -46,8 +46,8 @@ def test_automm():
     scores = predictor.evaluate(test_data, metrics=["accuracy"])
     print(scores)
 
-    from autogluon.multimodal import AutoMMPredictor
-    predictor = AutoMMPredictor(label=label_col)
+    from autogluon.multimodal import MultiModalPredictor
+    predictor = MultiModalPredictor(label=label_col)
     predictor.fit(
         train_data=train_data,
         hyperparameters={

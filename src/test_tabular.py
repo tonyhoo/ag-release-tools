@@ -18,55 +18,56 @@ def test_tabular():
     y_pred = predictor.predict(test_data_nolab)
     print("Predictions:  \n", y_pred)
     perf = predictor.evaluate_predictions(y_true=y_test, y_pred=y_pred, auxiliary_metrics=True)
-    predictor.leaderboard(test_data, silent=True)
+    print(predictor.leaderboard(test_data, silent=True))
 
-    def test_tabular_automm():
-        download_dir = './ag_petfinder_tutorial'
-        zip_file = 'https://automl-mm-bench.s3.amazonaws.com/petfinder_kaggle.zip'
+def test_tabular_automm():
+    download_dir = './ag_petfinder_tutorial'
+    zip_file = 'https://automl-mm-bench.s3.amazonaws.com/petfinder_kaggle.zip'
 
-        from autogluon.core.utils.loaders import load_zip
-        load_zip.unzip(zip_file, unzip_dir=download_dir)
+    from autogluon.core.utils.loaders import load_zip
+    load_zip.unzip(zip_file, unzip_dir=download_dir)
 
-        import os
-        dataset_path = download_dir + '/petfinder_processed'
+    import os
+    dataset_path = download_dir + '/petfinder_processed'
 
-        import pandas as pd
+    import pandas as pd
 
-        train_data = pd.read_csv(f'{dataset_path}/train.csv', index_col=0)
-        test_data = pd.read_csv(f'{dataset_path}/dev.csv', index_col=0)
+    train_data = pd.read_csv(f'{dataset_path}/train.csv', index_col=0)
+    test_data = pd.read_csv(f'{dataset_path}/dev.csv', index_col=0)
 
-        label = 'AdoptionSpeed'
-        image_col = 'Images'
+    label = 'AdoptionSpeed'
+    image_col = 'Images'
 
-        train_data[image_col] = train_data[image_col].apply(lambda ele: ele.split(';')[0])
-        test_data[image_col] = test_data[image_col].apply(lambda ele: ele.split(';')[0])
+    train_data[image_col] = train_data[image_col].apply(lambda ele: ele.split(';')[0])
+    test_data[image_col] = test_data[image_col].apply(lambda ele: ele.split(';')[0])
 
-        def path_expander(path, base_folder):
-            path_l = path.split(';')
-            return ';'.join([os.path.abspath(os.path.join(base_folder, path)) for path in path_l])
+    def path_expander(path, base_folder):
+        path_l = path.split(';')
+        return ';'.join([os.path.abspath(os.path.join(base_folder, path)) for path in path_l])
 
-        train_data[image_col] = train_data[image_col].apply(lambda ele: path_expander(ele, base_folder=dataset_path))
-        test_data[image_col] = test_data[image_col].apply(lambda ele: path_expander(ele, base_folder=dataset_path))
+    train_data[image_col] = train_data[image_col].apply(lambda ele: path_expander(ele, base_folder=dataset_path))
+    test_data[image_col] = test_data[image_col].apply(lambda ele: path_expander(ele, base_folder=dataset_path))
 
-        train_data = train_data.sample(500, random_state=0)
+    train_data = train_data.sample(500, random_state=0)
 
-        from autogluon.tabular import FeatureMetadata
-        feature_metadata = FeatureMetadata.from_df(train_data)
-        feature_metadata = feature_metadata.add_special_types({image_col: ['image_path']})
-        print(feature_metadata)
+    from autogluon.tabular import FeatureMetadata
+    feature_metadata = FeatureMetadata.from_df(train_data)
+    feature_metadata = feature_metadata.add_special_types({image_col: ['image_path']})
+    print(feature_metadata)
 
-        from autogluon.tabular.configs.hyperparameter_configs import get_hyperparameter_config
-        hyperparameters = get_hyperparameter_config('multimodal')
-        hyperparameters['AG_IMAGE_NN'] = {'model': 'resnet18'}
-        hyperparameters['AG_TEXT_NN'] = ['lower_quality_fast_train']
-        hyperparameters
+    from autogluon.tabular.configs.hyperparameter_configs import get_hyperparameter_config
+    hyperparameters = get_hyperparameter_config('multimodal')
+    hyperparameters['AG_IMAGE_NN'] = {'model': 'resnet18'}
+    hyperparameters['AG_TEXT_NN'] = ['lower_quality_fast_train']
+    hyperparameters
 
-        from autogluon.tabular import TabularPredictor
-        predictor = TabularPredictor(label=label).fit(
-            train_data=train_data,
-            hyperparameters=hyperparameters,
-            feature_metadata=feature_metadata,
-            time_limit=900,
-        )
+    from autogluon.tabular import TabularPredictor
+    predictor = TabularPredictor(label=label).fit(
+        train_data=train_data,
+        hyperparameters=hyperparameters,
+        feature_metadata=feature_metadata,
+        time_limit=900,
+    )
 
-        leaderboard = predictor.leaderboard(test_data)
+    print(predictor.leaderboard(test_data))
+    
