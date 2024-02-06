@@ -1,5 +1,7 @@
+from autogluon.core.utils import show_versions
 
 def test_automm():
+    show_versions()
     import os
     import numpy as np
     import warnings
@@ -62,8 +64,8 @@ def test_automm():
     scores = predictor.evaluate(test_data, metrics=["accuracy"])
     print(scores)
 
-    from autogluon.multimodal import AutoMMPredictor
-    predictor = AutoMMPredictor(label=label_col)
+    from autogluon.multimodal import MultiModalPredictor
+    predictor = MultiModalPredictor(label=label_col)
     predictor.fit(
         train_data=train_data,
         hyperparameters={
@@ -77,8 +79,8 @@ def test_automm():
     scores = predictor.evaluate(test_data, metrics=["accuracy"])
     print(scores)
 
-    from autogluon.multimodal import AutoMMPredictor
-    predictor = AutoMMPredictor(label=label_col)
+    from autogluon.multimodal import MultiModalPredictor
+    predictor = MultiModalPredictor(label=label_col)
     predictor.fit(
         train_data=train_data,
         hyperparameters={

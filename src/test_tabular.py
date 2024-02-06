@@ -1,6 +1,9 @@
 from autogluon.tabular import TabularDataset, TabularPredictor
+from autogluon.core.utils import show_versions
+
 
 def test_tabular():
+    show_versions()
     train_data = TabularDataset('https://autogluon.s3.amazonaws.com/datasets/Inc/train.csv')
     subsample_size = 500  # subsample subset of data for faster demo, try setting this to much larger values
     train_data = train_data.sample(n=subsample_size, random_state=0)
@@ -21,6 +24,7 @@ def test_tabular():
     print(predictor.leaderboard(test_data, silent=True))
 
 def test_tabular_automm():
+    show_versions()
     download_dir = './ag_petfinder_tutorial'
     zip_file = 'https://automl-mm-bench.s3.amazonaws.com/petfinder_kaggle.zip'
 

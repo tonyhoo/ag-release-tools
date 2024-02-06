@@ -1,8 +1,8 @@
 import typer
 import os
 import sys
-
-from utils import get_base_image_tags, run_command, run_tests_in_docker
+from pprint import pprint as print
+from utils import get_base_image_tags, run_command, run_tests_in_docker, get_latest_autogluon_images
 
 app = typer.Typer()
 SCRIPTS_MOUNT_DIR = "/autogluon/scripts"
@@ -36,11 +36,18 @@ def triton(image_tag: str = typer.Option("beta-autogluon-training-cpu:latest", p
 @app.command(name="pip_check")
 def pip_check(image_tag: str = typer.Option("beta-autogluon-training-cpu:latest", prompt=True)):
     test_module = "pip_check"
-    run_tests_in_docker(image_tag, test_module=test_module, test_function_name="pip_check")
+    print("Runnig pip check")
+    run_tests_in_docker(image_tag, test_module=test_module, test_function_name="run_pip_test")
     
+
+@app.command(name="get_images")
+def get_images(repo_name_prefix: str = typer.Option("pr-autogluon", prompt=True)):
+    images = get_latest_autogluon_images(repo_name_prefix)
+    print(images)
+    return images
     
-@app.command()
-def setup(account_id: str = typer.Option("845660132111", prompt=True),
+@app.command(name="build_images")
+def build_images(account_id: str = typer.Option("845660132111", prompt=True),
          region: str = typer.Option("us-west-2", prompt=True),
          local_dlc_repo_dir: str = typer.Option("/workplace/tonyhu/autogluon/deep-learning-containers", prompt=True)):
 
@@ -84,6 +91,34 @@ def setup(account_id: str = typer.Option("845660132111", prompt=True),
         for device_type in ["cpu", "gpu"]:
             build_command = f"python src/main.py --buildspec autogluon/{image_type}/buildspec.yml --framework autogluon --image_types {image_type} --device_types {device_type} --py_versions py3"
             run_command(build_command, env=env)
+
+@app.command(name="save_model")
+def save_model(version: str = typer.Option(..., prompt=True),
+                          model_dir: str = typer.Option("data-sm-package", prompt=True)):
+    """
+    Packages the model directory into a model_{version}.tar.gz file.
+
+    Args:
+    version (str): The version of the model to package.
+    model_dir (str): The directory of the model to package.
+    """
+    import shutil
+    import os
+
+    tar_file_name = f"model_{version}.tar.gz"
+    tar_file_path = os.path.join(os.getcwd(), tar_file_name)
+
+    # Remove existing tar file if exists
+    if os.path.exists(tar_file_path):
+        os.remove(tar_file_path)
+        print(f"Removed existing file: {tar_file_path}")
+
+    # Create tar.gz file
+    shutil.make_archive(f"model_{version}", 'gztar', model_dir)
+    print(f"Packaged model into: {tar_file_path}")
+
+    return tar_file_path
+
             
             
 if __name__ == "__main__":

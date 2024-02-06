@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 import base64
 import time
+from autogluon.core.utils import show_versions
+
 
 def start_triton_server():
     triton_path = '/opt/tritonserver/bin/tritonserver'  # Adjust this path as needed
@@ -29,6 +31,7 @@ def start_triton_server():
     return triton_server_process
 
 def test_triton():
+    show_versions()
     triton_server_process = start_triton_server()
     start_inference()
     triton_server_process.terminate()
