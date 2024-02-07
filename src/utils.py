@@ -87,6 +87,7 @@ def run_tests_in_docker(image_tag, test_module, test_function_name):
             ],
             check=True,
         )
+        return
     except subprocess.CalledProcessError as e:
         print(
             f"Test {test_function_name} failed in Docker container for image {image_tag}: {e}"

@@ -1,3 +1,5 @@
+import subprocess
+
 from autogluon.tabular import TabularDataset, TabularPredictor
 from autogluon.core.utils import show_versions
 
@@ -11,6 +13,7 @@ def test_tabular():
     print("Summary of class variable: \n", train_data[label].describe())
     save_path = 'agModels-predictClass'  # specifies folder to store trained models
     predictor = TabularPredictor(label=label, path=save_path).fit(train_data)
+    subprocess.run(["tar", "-C", save_path, "-czf", f"model.tar.gz", "."], check=True)
     test_data = TabularDataset('https://autogluon.s3.amazonaws.com/datasets/Inc/test.csv')
     y_test = test_data[label]  # values to predict
     test_data_nolab = test_data.drop(columns=[label])  # delete label column to prove we're not cheating
